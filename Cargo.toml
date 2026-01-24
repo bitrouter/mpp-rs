@@ -1,0 +1,95 @@
+[package]
+name = "mpp"
+version = "0.5.0"
+edition = "2021"
+description = "Rust SDK for the Machine Payments Protocol (MPP)"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/tempoxyz/mpp-rs"
+homepage = "https://github.com/tempoxyz/mpp-rs"
+documentation = "https://tempoxyz.github.io/mpp-rs"
+readme = "README.md"
+keywords = ["http", "payments", "402", "authentication"]
+categories = ["web-programming", "authentication", "cryptography"]
+
+[features]
+default = []
+
+# Side selection
+client = ["reqwest"]
+server = ["tokio", "futures-core", "async-stream"]
+
+# Method implementations
+evm = ["alloy", "alloy-signer-local", "hex", "rand"]
+tempo = ["evm", "tempo-alloy", "tempo-primitives", "uuid", "revm-database-interface"]
+
+# Utilities
+utils = ["hex", "rand"]
+
+# Middleware support (requires client)
+middleware = ["client", "reqwest-middleware", "async-trait", "anyhow", "http-types"]
+
+# Tower middleware support (server-side)
+tower = ["dep:tower-layer", "dep:tower-service", "http-types", "dep:http-body", "server"]
+
+# Axum middleware support (server-side convenience)
+axum = ["dep:axum-core", "server", "http-types"]
+
+# Integration tests (requires a running Tempo localnet)
+integration = ["tempo", "server", "client", "axum"]
+
+[dependencies]
+# Core dependencies (always included)
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+serde_json_canonicalizer = "0.3"
+thiserror = "2"
+time = { version = "0.3", features = ["formatting", "parsing"] }
+hmac = "0.12"
+sha2 = "0.10"
+
+# Optional dependencies
+hex = { version = "0.4", optional = true }
+base64 = "0.22"
+rand = { version = "0.9", optional = true }
+uuid = { version = "1", features = ["v4"], optional = true }
+tokio = { version = "1", features = ["rt", "sync", "time", "macros"], optional = true }
+futures-core = { version = "0.3", optional = true }
+async-stream = { version = "0.3", optional = true }
+alloy = { version = "1.2", features = ["full"], optional = true }
+alloy-signer-local = { version = "1.2", optional = true }
+
+# Tempo dependencies (optional)
+# Note: tempo feature requires git dependency - add to your Cargo.toml:
+#   [patch.crates-io]
+#   tempo-alloy = { git = "https://github.com/tempoxyz/tempo" }
+#   tempo-primitives = { git = "https://github.com/tempoxyz/tempo" }
+tempo-alloy = { version = "1", optional = true }
+tempo-primitives = { version = "1", optional = true }
+
+# Pin: revm-database-interface 9.0.1 bumps revm-state to v10, breaking revm v34 (still on v9)
+revm-database-interface = { version = ">=9.0.0, <9.0.1", optional = true }
+
+# HTTP client dependencies (optional)
+reqwest = { version = "0.12", features = ["json"], optional = true }
+reqwest-middleware = { version = "0.4", optional = true }
+async-trait = { version = "0.1", optional = true }
+anyhow = { version = "1", optional = true }
+http-types = { package = "http", version = "1", optional = true }
+
+# Tower middleware dependencies (optional)
+tower-layer = { version = "0.3", optional = true }
+tower-service = { version = "0.3", optional = true }
+http-body = { version = "1", optional = true }
+
+# Axum dependencies (optional)
+axum-core = { version = "0.5", optional = true }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net"] }
+axum = { version = "0.8" }
+reqwest = { version = "0.12", features = ["json"] }
+hex = "0.4"
+
+[patch.crates-io]
+tempo-alloy = { git = "https://github.com/tempoxyz/tempo" }
+tempo-primitives = { git = "https://github.com/tempoxyz/tempo" }
