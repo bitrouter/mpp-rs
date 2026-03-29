@@ -127,7 +127,7 @@ impl TempoBuilder {
 /// # Example
 ///
 /// ```ignore
-/// use mpp::server::{Mpp, tempo, TempoConfig};
+/// use mpp_br::server::{Mpp, tempo, TempoConfig};
 ///
 /// // Minimal — currency defaults to pathUSD
 /// let mpp = Mpp::create(tempo(TempoConfig {

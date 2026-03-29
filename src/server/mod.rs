@@ -3,7 +3,7 @@
 //! # Simple API
 //!
 //! ```ignore
-//! use mpp::server::{Mpp, tempo, TempoConfig};
+//! use mpp_br::server::{Mpp, tempo, TempoConfig};
 //!
 //! let mpp = Mpp::create(tempo(TempoConfig {
 //!     recipient: "0xabc...123",
@@ -16,7 +16,7 @@
 //! # Advanced API
 //!
 //! ```ignore
-//! use mpp::server::{Mpp, tempo_provider, TempoChargeMethod};
+//! use mpp_br::server::{Mpp, tempo_provider, TempoChargeMethod};
 //!
 //! let provider = tempo_provider("https://rpc.moderato.tempo.xyz")?;
 //! let method = TempoChargeMethod::new(provider);

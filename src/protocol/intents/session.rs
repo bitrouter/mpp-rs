@@ -16,7 +16,7 @@ use crate::error::{MppError, Result};
 /// # Examples
 ///
 /// ```
-/// use mpp::protocol::intents::SessionRequest;
+/// use mpp_br::protocol::intents::SessionRequest;
 ///
 /// let req = SessionRequest {
 ///     amount: "1000".to_string(),

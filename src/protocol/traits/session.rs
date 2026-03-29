@@ -25,9 +25,9 @@ use std::future::Future;
 /// ## Implementing for a custom payment network
 ///
 /// ```
-/// use mpp::protocol::traits::{SessionMethod, VerificationError};
-/// use mpp::protocol::core::{PaymentCredential, Receipt};
-/// use mpp::protocol::intents::SessionRequest;
+/// use mpp_br::protocol::traits::{SessionMethod, VerificationError};
+/// use mpp_br::protocol::core::{PaymentCredential, Receipt};
+/// use mpp_br::protocol::intents::SessionRequest;
 /// use std::future::Future;
 ///
 /// #[derive(Clone)]

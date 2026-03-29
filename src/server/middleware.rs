@@ -8,8 +8,8 @@
 //!
 //! ```ignore
 //! use axum::{Router, routing::get};
-//! use mpp::server::middleware::PaymentLayer;
-//! use mpp::server::{Mpp, tempo, TempoConfig};
+//! use mpp_br::server::middleware::PaymentLayer;
+//! use mpp_br::server::{Mpp, tempo, TempoConfig};
 //!
 //! let mpp = Mpp::create(tempo(TempoConfig {
 //!     recipient: "0xabc...",
@@ -264,7 +264,7 @@ impl PaymentLayer<ChargeVerifier> {
     /// # Example
     ///
     /// ```ignore
-    /// use mpp::server::middleware::PaymentLayer;
+    /// use mpp_br::server::middleware::PaymentLayer;
     ///
     /// let layer = PaymentLayer::charge(&mpp, "0.10").unwrap();
     /// ```

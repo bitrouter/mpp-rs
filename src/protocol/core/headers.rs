@@ -52,7 +52,7 @@ fn strip_payment_scheme(header: &str) -> Option<&str> {
 /// # Examples
 ///
 /// ```
-/// use mpp::protocol::core::extract_payment_scheme;
+/// use mpp_br::protocol::core::extract_payment_scheme;
 ///
 /// // Single Payment scheme
 /// assert!(extract_payment_scheme("Payment eyJhYmMi...").is_some());
@@ -190,7 +190,7 @@ fn is_valid_digest_format(d: &str) -> bool {
 /// # Examples
 ///
 /// ```
-/// use mpp::protocol::core::parse_www_authenticate;
+/// use mpp_br::protocol::core::parse_www_authenticate;
 ///
 /// let header = r#"Payment id="abc123", realm="api", method="tempo", intent="charge", request="eyJhbW91bnQiOiIxMDAwMCJ9""#;
 /// let challenge = parse_www_authenticate(header).unwrap();
@@ -263,7 +263,7 @@ pub fn parse_www_authenticate(header: &str) -> Result<PaymentChallenge> {
 /// # Examples
 ///
 /// ```
-/// use mpp::protocol::core::parse_www_authenticate_all;
+/// use mpp_br::protocol::core::parse_www_authenticate_all;
 ///
 /// let headers = vec![
 ///     "Bearer token",
@@ -294,8 +294,8 @@ pub fn parse_www_authenticate_all<'a>(
 /// # Examples
 ///
 /// ```
-/// use mpp::protocol::core::{PaymentChallenge, format_www_authenticate};
-/// use mpp::protocol::core::types::Base64UrlJson;
+/// use mpp_br::protocol::core::{PaymentChallenge, format_www_authenticate};
+/// use mpp_br::protocol::core::types::Base64UrlJson;
 ///
 /// let challenge = PaymentChallenge {
 ///     id: "abc123".to_string(),
@@ -359,8 +359,8 @@ pub fn format_www_authenticate(challenge: &PaymentChallenge) -> Result<String> {
 /// # Examples
 ///
 /// ```
-/// use mpp::protocol::core::{PaymentChallenge, format_www_authenticate_many};
-/// use mpp::protocol::core::types::Base64UrlJson;
+/// use mpp_br::protocol::core::{PaymentChallenge, format_www_authenticate_many};
+/// use mpp_br::protocol::core::types::Base64UrlJson;
 ///
 /// let challenge = PaymentChallenge {
 ///     id: "abc123".to_string(),

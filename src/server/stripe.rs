@@ -73,7 +73,7 @@ impl StripeBuilder {
 /// # Example
 ///
 /// ```ignore
-/// use mpp::server::{Mpp, stripe, StripeConfig};
+/// use mpp_br::server::{Mpp, stripe, StripeConfig};
 ///
 /// let mpp = Mpp::create(
 ///     stripe(StripeConfig {

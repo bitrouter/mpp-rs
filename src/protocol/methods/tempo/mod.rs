@@ -21,7 +21,7 @@
 //! For server-side challenge creation, use the helper functions:
 //!
 //! ```
-//! use mpp::protocol::methods::tempo;
+//! use mpp_br::protocol::methods::tempo;
 //!
 //! // Simple charge challenge with HMAC-bound ID
 //! let challenge = tempo::charge_challenge(
@@ -33,7 +33,7 @@
 //! ).unwrap();
 //!
 //! // With full options (fee payer, description, etc.)
-//! use mpp::protocol::intents::ChargeRequest;
+//! use mpp_br::protocol::intents::ChargeRequest;
 //! let request = ChargeRequest {
 //!     amount: "1000000".into(),
 //!     currency: "0x20c0000000000000000000000000000000000000".into(),
@@ -63,8 +63,8 @@
 //! adds its signature and broadcasts.
 //!
 //! ```
-//! use mpp::protocol::intents::ChargeRequest;
-//! use mpp::protocol::methods::tempo::TempoChargeExt;
+//! use mpp_br::protocol::intents::ChargeRequest;
+//! use mpp_br::protocol::methods::tempo::TempoChargeExt;
 //!
 //! # let req = ChargeRequest {
 //! #     amount: "1000".into(), currency: "0x".into(), recipient: None,
@@ -84,9 +84,9 @@
 //! # Examples
 //!
 //! ```
-//! use mpp::protocol::core::parse_www_authenticate;
-//! use mpp::protocol::intents::ChargeRequest;
-//! use mpp::protocol::methods::tempo::{TempoChargeExt, CHAIN_ID, MODERATO_CHAIN_ID};
+//! use mpp_br::protocol::core::parse_www_authenticate;
+//! use mpp_br::protocol::intents::ChargeRequest;
+//! use mpp_br::protocol::methods::tempo::{TempoChargeExt, CHAIN_ID, MODERATO_CHAIN_ID};
 //!
 //! let header = r#"Payment id="abc", realm="api", method="tempo", intent="charge", request="eyJhbW91bnQiOiIxMDAwIiwiY3VycmVuY3kiOiJVU0QifQ""#;
 //! let challenge = parse_www_authenticate(header).unwrap();
@@ -196,7 +196,7 @@ pub use crate::protocol::intents::INTENT_SESSION;
 /// # Examples
 ///
 /// ```
-/// use mpp::protocol::methods::tempo;
+/// use mpp_br::protocol::methods::tempo;
 ///
 /// let challenge = tempo::charge_challenge(
 ///     "my-server-secret",
@@ -246,8 +246,8 @@ pub fn charge_challenge(
 /// # Examples
 ///
 /// ```
-/// use mpp::protocol::intents::ChargeRequest;
-/// use mpp::protocol::methods::tempo;
+/// use mpp_br::protocol::intents::ChargeRequest;
+/// use mpp_br::protocol::methods::tempo;
 ///
 /// let request = ChargeRequest {
 ///     amount: "1000000".into(),
@@ -343,7 +343,7 @@ pub fn charge_challenge_with_options(
 /// # Example
 ///
 /// ```
-/// use mpp::protocol::methods::tempo::generate_challenge_id;
+/// use mpp_br::protocol::methods::tempo::generate_challenge_id;
 ///
 /// let id = generate_challenge_id(
 ///     "my-secret-key",
@@ -390,7 +390,7 @@ pub fn generate_challenge_id(
 /// # Example
 ///
 /// ```
-/// use mpp::protocol::methods::tempo::generate_challenge_id_from_request;
+/// use mpp_br::protocol::methods::tempo::generate_challenge_id_from_request;
 /// use serde_json::json;
 ///
 /// let id = generate_challenge_id_from_request(

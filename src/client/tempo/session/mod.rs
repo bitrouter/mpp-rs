@@ -27,11 +27,14 @@ use crate::protocol::methods::tempo::session::TempoSessionExt;
 /// Manages the full channel lifecycle (open, voucher, close) automatically.
 /// Channels are tracked in an internal registry keyed by `payee:currency:escrow`.
 ///
+/// Accepts any type implementing alloy's [`Signer`](alloy::signers::Signer)
+/// trait — local private keys, KMS-backed signers, hardware wallets, etc.
+///
 /// # Examples
 ///
 /// ```ignore
-/// use mpp::client::TempoSessionProvider;
-/// use mpp::PrivateKeySigner;
+/// use mpp_br::client::TempoSessionProvider;
+/// use mpp_br::PrivateKeySigner;
 ///
 /// let signer = PrivateKeySigner::random();
 /// let provider = TempoSessionProvider::new(
@@ -45,7 +48,7 @@ use crate::protocol::methods::tempo::session::TempoSessionExt;
 #[derive(Clone)]
 #[allow(clippy::type_complexity)]
 pub struct TempoSessionProvider {
-    signer: alloy::signers::local::PrivateKeySigner,
+    signer: Arc<dyn alloy::signers::Signer + Send + Sync>,
     rpc_url: reqwest::Url,
     /// Escrow contract address override. If None, resolved from challenge or defaults.
     escrow_contract: Option<Address>,
@@ -70,16 +73,19 @@ pub struct TempoSessionProvider {
 impl TempoSessionProvider {
     /// Create a new Tempo session provider.
     ///
+    /// Accepts any type implementing alloy's [`Signer`](alloy::signers::Signer)
+    /// trait — local private keys, KMS-backed signers, hardware wallets, etc.
+    ///
     /// # Errors
     ///
     /// Returns an error if the RPC URL is invalid.
     pub fn new(
-        signer: alloy::signers::local::PrivateKeySigner,
+        signer: impl alloy::signers::Signer + Send + Sync + 'static,
         rpc_url: impl AsRef<str>,
     ) -> Result<Self, MppError> {
         let url = rpc_url.as_ref().parse().mpp_config("invalid RPC URL")?;
         Ok(Self {
-            signer,
+            signer: Arc::new(signer),
             rpc_url: url,
             escrow_contract: None,
             authorized_signer: None,
@@ -138,8 +144,8 @@ impl TempoSessionProvider {
     }
 
     /// Get a reference to the signer.
-    pub fn signer(&self) -> &alloy::signers::local::PrivateKeySigner {
-        &self.signer
+    pub fn signer(&self) -> &(dyn alloy::signers::Signer + Send + Sync) {
+        &*self.signer
     }
 
     /// Get the RPC URL.
@@ -217,7 +223,7 @@ impl TempoSessionProvider {
         }
 
         let payload = create_voucher_payload(
-            &self.signer,
+            self.signer.as_ref(),
             entry.channel_id,
             entry.cumulative_amount,
             entry.escrow_contract,
@@ -290,7 +296,7 @@ impl TempoSessionProvider {
         let payer = self.signer.address();
 
         let payload = create_close_payload(
-            &self.signer,
+            self.signer.as_ref(),
             entry.channel_id,
             entry.cumulative_amount,
             entry.escrow_contract,
@@ -398,7 +404,7 @@ impl PaymentProvider for TempoSessionProvider {
                 entry.cumulative_amount += amount;
 
                 let payload = create_voucher_payload(
-                    &self.signer,
+                    self.signer.as_ref(),
                     entry.channel_id,
                     entry.cumulative_amount,
                     escrow_contract,
@@ -428,7 +434,7 @@ impl PaymentProvider for TempoSessionProvider {
                     recovered.cumulative_amount += amount;
 
                     let payload = create_voucher_payload(
-                        &self.signer,
+                        self.signer.as_ref(),
                         recovered.channel_id,
                         recovered.cumulative_amount,
                         escrow_contract,
@@ -456,7 +462,7 @@ impl PaymentProvider for TempoSessionProvider {
 
         let (entry, payload) = create_open_payload(
             &provider,
-            &self.signer,
+            self.signer.as_ref(),
             Some(&self.signing_mode),
             payer,
             OpenPayloadOptions {

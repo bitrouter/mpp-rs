@@ -13,7 +13,7 @@ use crate::protocol::core::{MethodName, Receipt, ReceiptStatus};
 /// # Examples
 ///
 /// ```
-/// use mpp::protocol::methods::tempo::SessionReceipt;
+/// use mpp_br::protocol::methods::tempo::SessionReceipt;
 ///
 /// let receipt = SessionReceipt::new(
 ///     "2026-01-01T00:00:00Z",

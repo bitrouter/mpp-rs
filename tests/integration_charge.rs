@@ -23,9 +23,9 @@ use alloy::signers::local::PrivateKeySigner;
 use alloy::signers::SignerSync;
 use alloy::sol_types::SolCall;
 use axum::{routing::get, Json, Router};
-use mpp::client::{Fetch, TempoProvider};
-use mpp::server::axum::{ChargeChallenger, ChargeConfig, MppCharge, WithReceipt};
-use mpp::server::{tempo, Mpp, TempoConfig};
+use mpp_br::client::{Fetch, TempoProvider};
+use mpp_br::server::axum::{ChargeChallenger, ChargeConfig, MppCharge, WithReceipt};
+use mpp_br::server::{tempo, Mpp, TempoConfig};
 use reqwest::Client;
 use tempo_alloy::contracts::precompiles::tip20::ITIP20;
 use tempo_alloy::contracts::precompiles::ITIPFeeAMM;
@@ -230,7 +230,7 @@ fn encode_fee_payer_envelope_for_test(
     sender: Address,
     signature: tempo_primitives::transaction::TempoSignature,
 ) -> Vec<u8> {
-    mpp::protocol::methods::tempo::FeePayerEnvelope78::from_signing_tx(
+    mpp_br::protocol::methods::tempo::FeePayerEnvelope78::from_signing_tx(
         tx.clone(),
         sender,
         signature,
@@ -463,8 +463,8 @@ async fn test_e2e_charge_round_trip() {
         .expect("missing Payment-Receipt header")
         .to_str()
         .unwrap();
-    let receipt = mpp::parse_receipt(receipt_hdr).expect("failed to parse receipt");
-    assert_eq!(receipt.status, mpp::ReceiptStatus::Success);
+    let receipt = mpp_br::parse_receipt(receipt_hdr).expect("failed to parse receipt");
+    assert_eq!(receipt.status, mpp_br::ReceiptStatus::Success);
     assert_eq!(receipt.method.as_str(), "tempo");
     assert!(
         receipt.reference.starts_with("0x"),
@@ -521,8 +521,8 @@ async fn test_e2e_premium_charge() {
         .expect("missing Payment-Receipt header")
         .to_str()
         .unwrap();
-    let receipt = mpp::parse_receipt(receipt_hdr).expect("failed to parse receipt");
-    assert_eq!(receipt.status, mpp::ReceiptStatus::Success);
+    let receipt = mpp_br::parse_receipt(receipt_hdr).expect("failed to parse receipt");
+    assert_eq!(receipt.status, mpp_br::ReceiptStatus::Success);
 
     let body: serde_json::Value = resp.json().await.unwrap();
     assert_eq!(body["message"], "premium content");
@@ -639,10 +639,10 @@ async fn test_wrong_recipient_transfer_rejected() {
         .expect("missing WWW-Authenticate")
         .to_str()
         .unwrap();
-    let challenge = mpp::parse_www_authenticate(www_auth).expect("failed to parse challenge");
+    let challenge = mpp_br::parse_www_authenticate(www_auth).expect("failed to parse challenge");
 
     // Step 2: Send a real TIP-20 transfer to the WRONG recipient.
-    let charge: mpp::ChargeRequest = challenge.request.decode().unwrap();
+    let charge: mpp_br::ChargeRequest = challenge.request.decode().unwrap();
     let amount: U256 = charge.amount.parse().unwrap();
     let currency: Address = charge.currency.parse().unwrap();
 
@@ -661,9 +661,9 @@ async fn test_wrong_recipient_transfer_rejected() {
     // Step 3: Build a credential with the wrong-recipient tx hash.
     let echo = challenge.to_echo();
     let credential =
-        mpp::PaymentCredential::new(echo, mpp::PaymentPayload::hash(format!("{tx_hash:#x}")));
+        mpp_br::PaymentCredential::new(echo, mpp_br::PaymentPayload::hash(format!("{tx_hash:#x}")));
     let auth_header =
-        mpp::format_authorization(&credential).expect("failed to format authorization");
+        mpp_br::format_authorization(&credential).expect("failed to format authorization");
 
     // Step 4: Submit — should be rejected with 402.
     let resp = Client::new()
@@ -727,8 +727,8 @@ async fn test_multiple_sequential_payments() {
         .expect("missing receipt A")
         .to_str()
         .unwrap();
-    let receipt_a = mpp::parse_receipt(receipt_a_hdr).expect("failed to parse receipt A");
-    assert_eq!(receipt_a.status, mpp::ReceiptStatus::Success);
+    let receipt_a = mpp_br::parse_receipt(receipt_a_hdr).expect("failed to parse receipt A");
+    assert_eq!(receipt_a.status, mpp_br::ReceiptStatus::Success);
 
     // Client B pays.
     let provider_b = TempoProvider::new(client_b, &rpc).expect("failed to create TempoProvider B");
@@ -745,8 +745,8 @@ async fn test_multiple_sequential_payments() {
         .expect("missing receipt B")
         .to_str()
         .unwrap();
-    let receipt_b = mpp::parse_receipt(receipt_b_hdr).expect("failed to parse receipt B");
-    assert_eq!(receipt_b.status, mpp::ReceiptStatus::Success);
+    let receipt_b = mpp_br::parse_receipt(receipt_b_hdr).expect("failed to parse receipt B");
+    assert_eq!(receipt_b.status, mpp_br::ReceiptStatus::Success);
 
     // Receipts should reference different transactions.
     assert_ne!(
@@ -891,8 +891,8 @@ async fn test_e2e_charge_without_fee_payer() {
         .expect("missing Payment-Receipt header")
         .to_str()
         .unwrap();
-    let receipt = mpp::parse_receipt(receipt_hdr).expect("failed to parse receipt");
-    assert_eq!(receipt.status, mpp::ReceiptStatus::Success);
+    let receipt = mpp_br::parse_receipt(receipt_hdr).expect("failed to parse receipt");
+    assert_eq!(receipt.status, mpp_br::ReceiptStatus::Success);
     assert_eq!(receipt.method.as_str(), "tempo");
     assert!(receipt.reference.starts_with("0x"));
 
@@ -969,8 +969,8 @@ async fn test_e2e_charge_with_fee_payer() {
         .expect("missing Payment-Receipt header")
         .to_str()
         .unwrap();
-    let receipt = mpp::parse_receipt(receipt_hdr).expect("failed to parse receipt");
-    assert_eq!(receipt.status, mpp::ReceiptStatus::Success);
+    let receipt = mpp_br::parse_receipt(receipt_hdr).expect("failed to parse receipt");
+    assert_eq!(receipt.status, mpp_br::ReceiptStatus::Success);
     assert_eq!(receipt.method.as_str(), "tempo");
     assert!(receipt.reference.starts_with("0x"));
 
@@ -1099,10 +1099,10 @@ async fn test_fee_payer_wrong_recipient_rejected() {
         .expect("missing WWW-Authenticate")
         .to_str()
         .unwrap();
-    let challenge = mpp::parse_www_authenticate(www_auth).expect("failed to parse challenge");
+    let challenge = mpp_br::parse_www_authenticate(www_auth).expect("failed to parse challenge");
 
     // Step 2: Build a 0x78 fee payer envelope that sends to the WRONG recipient.
-    let charge: mpp::ChargeRequest = challenge.request.decode().unwrap();
+    let charge: mpp_br::ChargeRequest = challenge.request.decode().unwrap();
     let amount: U256 = charge.amount.parse().unwrap();
     let currency: Address = charge.currency.parse().unwrap();
 
@@ -1153,13 +1153,13 @@ async fn test_fee_payer_wrong_recipient_rejected() {
 
     // Step 3: Build a credential with the malicious envelope.
     let echo = challenge.to_echo();
-    let credential = mpp::PaymentCredential::with_source(
+    let credential = mpp_br::PaymentCredential::with_source(
         echo,
         format!("did:pkh:eip155:{}:{}", chain_id, client_signer.address()),
-        mpp::PaymentPayload::transaction(signed_tx_hex),
+        mpp_br::PaymentPayload::transaction(signed_tx_hex),
     );
     let auth_header =
-        mpp::format_authorization(&credential).expect("failed to format authorization");
+        mpp_br::format_authorization(&credential).expect("failed to format authorization");
 
     // Step 4: Submit — should be rejected with 402.
     let resp = Client::new()
@@ -1230,7 +1230,7 @@ async fn test_fee_payer_balance_accounting() {
         .expect("missing Payment-Receipt header")
         .to_str()
         .unwrap();
-    let receipt = mpp::parse_receipt(receipt_hdr).expect("failed to parse receipt");
+    let receipt = mpp_br::parse_receipt(receipt_hdr).expect("failed to parse receipt");
     let tx_hash: B256 = receipt
         .reference
         .parse()
@@ -1374,7 +1374,7 @@ async fn test_fee_payer_allows_client_without_gas_buffer() {
         .expect("missing Payment-Receipt header")
         .to_str()
         .unwrap();
-    let receipt = mpp::parse_receipt(receipt_hdr).expect("failed to parse receipt");
+    let receipt = mpp_br::parse_receipt(receipt_hdr).expect("failed to parse receipt");
     let tx_hash: B256 = receipt
         .reference
         .parse()
@@ -1435,8 +1435,8 @@ async fn test_e2e_fee_payer_premium_charge() {
         .expect("missing Payment-Receipt header")
         .to_str()
         .unwrap();
-    let receipt = mpp::parse_receipt(receipt_hdr).expect("failed to parse receipt");
-    assert_eq!(receipt.status, mpp::ReceiptStatus::Success);
+    let receipt = mpp_br::parse_receipt(receipt_hdr).expect("failed to parse receipt");
+    assert_eq!(receipt.status, mpp_br::ReceiptStatus::Success);
 
     let body: serde_json::Value = resp.json().await.unwrap();
     assert_eq!(body["message"], "premium content");

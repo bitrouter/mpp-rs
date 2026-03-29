@@ -17,7 +17,7 @@
 //! [`MppCharge<C>`] as the extractor:
 //!
 //! ```ignore
-//! use mpp::server::axum::{ChargeConfig, MppCharge};
+//! use mpp_br::server::axum::{ChargeConfig, MppCharge};
 //!
 //! struct OneCent;
 //! impl ChargeConfig for OneCent {
@@ -46,8 +46,8 @@
 //!
 //! ```ignore
 //! use axum::{routing::get, Router, Json};
-//! use mpp::server::{Mpp, tempo, TempoConfig};
-//! use mpp::server::axum::{MppCharge, ChargeConfig, ChargeChallenger};
+//! use mpp_br::server::{Mpp, tempo, TempoConfig};
+//! use mpp_br::server::axum::{MppCharge, ChargeConfig, ChargeChallenger};
 //! use std::sync::Arc;
 //!
 //! struct OneCent;
@@ -88,7 +88,7 @@ use crate::protocol::core::{PaymentChallenge, Receipt};
 /// # Example
 ///
 /// ```ignore
-/// use mpp::server::axum::PaymentRequired;
+/// use mpp_br::server::axum::PaymentRequired;
 ///
 /// async fn handler() -> PaymentRequired {
 ///     let challenge = mpp.charge("1.00").unwrap();
@@ -139,7 +139,7 @@ impl IntoResponse for PaymentRequired {
 /// # Example
 ///
 /// ```ignore
-/// use mpp::server::axum::{ChargeConfig, MppCharge};
+/// use mpp_br::server::axum::{ChargeConfig, MppCharge};
 ///
 /// struct PremiumFortune;
 /// impl ChargeConfig for PremiumFortune {
@@ -180,8 +180,8 @@ pub struct ChallengeOptions {
 /// # Example
 ///
 /// ```ignore
-/// use mpp::server::axum::{ChargeConfig, MppCharge, ChargeChallenger};
-/// use mpp::server::{Mpp, tempo, TempoConfig};
+/// use mpp_br::server::axum::{ChargeConfig, MppCharge, ChargeChallenger};
+/// use mpp_br::server::{Mpp, tempo, TempoConfig};
 /// use axum::{routing::get, Router, Json};
 /// use std::sync::Arc;
 ///
@@ -402,7 +402,7 @@ where
 /// # Example
 ///
 /// ```ignore
-/// use mpp::server::axum::{ChargeConfig, MppCharge, WithReceipt};
+/// use mpp_br::server::axum::{ChargeConfig, MppCharge, WithReceipt};
 /// use axum::Json;
 ///
 /// struct OneCent;

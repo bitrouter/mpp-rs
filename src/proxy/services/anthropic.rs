@@ -7,8 +7,8 @@ use crate::proxy::service::{Service, ServiceBuilder};
 /// # Example
 ///
 /// ```
-/// use mpp::proxy::service::{Endpoint, PaidEndpoint, ServiceBuilder};
-/// use mpp::proxy::services::anthropic;
+/// use mpp_br::proxy::service::{Endpoint, PaidEndpoint, ServiceBuilder};
+/// use mpp_br::proxy::services::anthropic;
 ///
 /// let svc = anthropic::service("sk-ant-...", |r| {
 ///     r.route("POST /v1/messages", Endpoint::Paid(PaidEndpoint {

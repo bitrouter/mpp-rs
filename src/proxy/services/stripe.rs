@@ -8,11 +8,11 @@ use base64::Engine;
 /// # Example
 ///
 /// ```
-/// use mpp::proxy::service::{Endpoint, ServiceBuilder};
-/// use mpp::proxy::services::stripe;
+/// use mpp_br::proxy::service::{Endpoint, ServiceBuilder};
+/// use mpp_br::proxy::services::stripe;
 ///
 /// let svc = stripe::service("sk_test_123", |r| {
-///     r.route("POST /v1/charges", Endpoint::Paid(mpp::proxy::service::PaidEndpoint {
+///     r.route("POST /v1/charges", Endpoint::Paid(mpp_br::proxy::service::PaidEndpoint {
 ///         intent: "charge".into(),
 ///         amount: "1".into(),
 ///         unit_type: None,

@@ -113,9 +113,9 @@ fn build_tempo_signature(
 ///
 /// Uses the provided signing mode to produce either a primitive ECDSA
 /// signature (direct) or a keychain envelope signature.
-pub fn sign_and_encode(
+pub fn sign_and_encode<S: alloy::signers::SignerSync + ?Sized>(
     tx: tempo_primitives::transaction::TempoTransaction,
-    signer: &impl alloy::signers::SignerSync,
+    signer: &S,
     mode: &TempoSigningMode,
 ) -> Result<Vec<u8>, MppError> {
     use alloy::eips::Encodable2718;
@@ -134,9 +134,11 @@ pub fn sign_and_encode(
 ///
 /// The resulting bytes start with `0x78` and are meant to be sent to an MPPx server
 /// (or fee payer proxy) which will co-sign and broadcast.
-pub fn sign_and_encode_fee_payer_envelope(
+pub fn sign_and_encode_fee_payer_envelope<
+    S: alloy::signers::SignerSync + alloy::signers::Signer + ?Sized,
+>(
     tx: tempo_primitives::transaction::TempoTransaction,
-    signer: &(impl alloy::signers::SignerSync + alloy::signers::Signer),
+    signer: &S,
     mode: &TempoSigningMode,
 ) -> Result<Vec<u8>, MppError> {
     use alloy::primitives::U256;
@@ -174,9 +176,9 @@ pub fn sign_and_encode_fee_payer_envelope(
 }
 
 /// Async version of [`sign_and_encode`] for signers that require async signing.
-pub async fn sign_and_encode_async(
+pub async fn sign_and_encode_async<S: alloy::signers::Signer + ?Sized>(
     tx: tempo_primitives::transaction::TempoTransaction,
-    signer: &impl alloy::signers::Signer,
+    signer: &S,
     mode: &TempoSigningMode,
 ) -> Result<Vec<u8>, MppError> {
     use alloy::eips::Encodable2718;
@@ -193,9 +195,9 @@ pub async fn sign_and_encode_async(
 }
 
 /// Async version of [`sign_and_encode_fee_payer_envelope`].
-pub async fn sign_and_encode_fee_payer_envelope_async(
+pub async fn sign_and_encode_fee_payer_envelope_async<S: alloy::signers::Signer + ?Sized>(
     tx: tempo_primitives::transaction::TempoTransaction,
-    signer: &impl alloy::signers::Signer,
+    signer: &S,
     mode: &TempoSigningMode,
 ) -> Result<Vec<u8>, MppError> {
     use alloy::primitives::U256;

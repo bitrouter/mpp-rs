@@ -26,8 +26,8 @@
 //! # Example (server)
 //!
 //! ```
-//! use mpp::mcp;
-//! use mpp::{PaymentChallenge, Receipt};
+//! use mpp_br::mcp;
+//! use mpp_br::{PaymentChallenge, Receipt};
 //! use serde_json::json;
 //!
 //! // Extract credential from incoming request
@@ -38,7 +38,7 @@
 //! // Build a payment-required error
 //! let challenge = PaymentChallenge::new(
 //!     "ch_123", "api.example.com", "tempo", "charge",
-//!     mpp::Base64UrlJson::from_value(&json!({"amount": "1000"})).unwrap(),
+//!     mpp_br::Base64UrlJson::from_value(&json!({"amount": "1000"})).unwrap(),
 //! );
 //! let error = mcp::payment_required_error(&challenge);
 //! assert_eq!(error.code, mcp::PAYMENT_REQUIRED_CODE);

@@ -56,7 +56,7 @@ impl From<AmountError> for crate::error::MppError {
 /// # Examples
 ///
 /// ```
-/// use mpp::server::parse_dollar_amount;
+/// use mpp_br::server::parse_dollar_amount;
 ///
 /// assert_eq!(parse_dollar_amount("0.10", 6).unwrap(), "100000");
 /// assert_eq!(parse_dollar_amount("1", 6).unwrap(), "1000000");

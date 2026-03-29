@@ -189,9 +189,9 @@ impl TempoCharge {
     ///
     /// Returns an error if the chain_id is not a known Tempo network, or if
     /// RPC calls (nonce, gas estimation) fail.
-    pub async fn sign(
+    pub async fn sign<S: alloy::signers::Signer + ?Sized>(
         self,
-        signer: &(impl alloy::signers::Signer + Clone),
+        signer: &S,
     ) -> Result<SignedTempoCharge, MppError> {
         self.sign_with_options(signer, SignOptions::default()).await
     }
@@ -200,9 +200,9 @@ impl TempoCharge {
     ///
     /// Power users use this to inject their own nonce resolution, gas bumping,
     /// keychain signing mode, and key authorization provisioning.
-    pub async fn sign_with_options(
+    pub async fn sign_with_options<S: alloy::signers::Signer + ?Sized>(
         self,
-        signer: &(impl alloy::signers::Signer + Clone),
+        signer: &S,
         options: SignOptions,
     ) -> Result<SignedTempoCharge, MppError> {
         let signing_mode = options.signing_mode.unwrap_or_default();
