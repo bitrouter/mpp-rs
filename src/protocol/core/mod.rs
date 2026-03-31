@@ -83,6 +83,7 @@ pub use headers::{
     parse_www_authenticate_all, AUTHORIZATION_HEADER, PAYMENT_RECEIPT_HEADER, PAYMENT_SCHEME,
     WWW_AUTHENTICATE_HEADER,
 };
+
 pub use types::{
     base64url_decode, base64url_encode, Base64UrlJson, IntentName, MethodName, PayloadType,
     PaymentProtocol, ReceiptStatus,

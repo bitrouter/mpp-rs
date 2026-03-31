@@ -255,9 +255,14 @@ pub fn parse_www_authenticate(header: &str) -> Result<PaymentChallenge> {
     })
 }
 
-/// Parse all WWW-Authenticate headers that use the Payment scheme.
+/// Parse all Payment challenges from one or more WWW-Authenticate header values.
 ///
-/// Returns a Vec of Results - one for each Payment header found.
+/// Handles both:
+/// - Multiple separate header values (one challenge each)
+/// - A single header value containing multiple comma-separated Payment challenges
+///   (per RFC 9110 §11.6.1)
+///
+/// Returns a Vec of Results - one for each Payment challenge found.
 /// Non-Payment headers are skipped.
 ///
 /// # Examples
@@ -265,6 +270,7 @@ pub fn parse_www_authenticate(header: &str) -> Result<PaymentChallenge> {
 /// ```
 /// use mpp::protocol::core::parse_www_authenticate_all;
 ///
+/// // Separate header values
 /// let headers = vec![
 ///     "Bearer token",
 ///     "Payment id=\"abc\", realm=\"api\", method=\"tempo\", intent=\"charge\", request=\"e30\"",
@@ -273,17 +279,53 @@ pub fn parse_www_authenticate(header: &str) -> Result<PaymentChallenge> {
 /// let challenges = parse_www_authenticate_all(headers);
 /// assert_eq!(challenges.len(), 2);
 /// ```
+///
+/// ```
+/// use mpp::protocol::core::parse_www_authenticate_all;
+///
+/// // Single header with multiple challenges
+/// let header = concat!(
+///     r#"Payment id="a", realm="api", method="tempo", intent="charge", request="e30", "#,
+///     r#"Payment id="b", realm="api", method="stripe", intent="charge", request="e30""#,
+/// );
+/// let challenges = parse_www_authenticate_all(vec![header]);
+/// assert_eq!(challenges.len(), 2);
+/// ```
 pub fn parse_www_authenticate_all<'a>(
     headers: impl IntoIterator<Item = &'a str>,
 ) -> Vec<Result<PaymentChallenge>> {
     headers
         .into_iter()
-        .filter(|h| {
-            h.trim_start()
-                .get(..8)
-                .is_some_and(|s| s.eq_ignore_ascii_case("payment "))
-        })
+        .flat_map(split_payment_challenges)
         .map(parse_www_authenticate)
+        .collect()
+}
+
+/// Split a header value into individual `Payment` challenge slices.
+///
+/// Finds `Payment ` scheme boundaries (case-insensitive per RFC 9110 §11.6.1)
+/// that appear at the start of the header or after a comma separator, and
+/// returns the individual challenge strings.
+fn split_payment_challenges(header: &str) -> Vec<&str> {
+    fn is_valid_start(header: &str, pos: usize) -> bool {
+        pos == 0 || header[..pos].bytes().rfind(|b| !b.is_ascii_whitespace()) == Some(b',')
+    }
+
+    let lower = header.to_ascii_lowercase();
+
+    let starts: Vec<_> = lower
+        .match_indices("payment ")
+        .map(|(pos, _)| pos)
+        .filter(|&pos| is_valid_start(header, pos))
+        .collect();
+
+    starts
+        .iter()
+        .enumerate()
+        .map(|(i, &start)| {
+            let end = starts.get(i + 1).copied().unwrap_or(header.len());
+            header[start..end].trim_end_matches([',', ' '])
+        })
         .collect()
 }
 
@@ -878,5 +920,67 @@ mod tests {
         let wire = "eyJtZXRob2QiOiJ0ZW1wbyIsInJlZmVyZW5jZSI6IjB4YWJjIiwic3RhdHVzIjoic3VjY2VzcyIsInRpbWVzdGFtcCI6IkphbiAyOSAyMDI2IDEyOjAwIn0";
         let err = parse_receipt(wire).unwrap_err();
         assert!(err.to_string().contains("timestamp"));
+    }
+
+    #[test]
+    fn test_split_payment_challenges() {
+        // single challenge
+        let single =
+            r#"Payment id="a", realm="api", method="tempo", intent="charge", request="e30""#;
+        assert_eq!(split_payment_challenges(single).len(), 1);
+
+        // two challenges, normal spacing
+        let two = concat!(
+            r#"Payment id="a", realm="api", method="tempo", intent="charge", request="e30", "#,
+            r#"Payment id="b", realm="api", method="stripe", intent="charge", request="e30""#,
+        );
+        let parts = split_payment_challenges(two);
+        assert_eq!(parts.len(), 2);
+        assert!(parts[0].contains(r#"id="a""#));
+        assert!(parts[1].contains(r#"id="b""#));
+
+        // no whitespace after comma, mixed case scheme
+        let compact = concat!(
+            r#"PAYMENT id="a", realm="api", method="tempo", intent="charge", request="e30","#,
+            r#"payment id="b", realm="api", method="stripe", intent="charge", request="e30""#,
+        );
+        assert_eq!(split_payment_challenges(compact).len(), 2);
+
+        // non-Payment scheme is dropped
+        assert!(split_payment_challenges("Bearer token123").is_empty());
+    }
+
+    #[test]
+    fn test_parse_www_authenticate_all_multi_challenge() {
+        let header = concat!(
+            r#"Payment id="t1", realm="api", method="tempo", intent="charge", request="e30", "#,
+            r#"Payment id="s1", realm="api", method="stripe", intent="charge", request="e30""#,
+        );
+        let results = parse_www_authenticate_all(vec![header]);
+        assert_eq!(results.len(), 2);
+        assert_eq!(results[0].as_ref().unwrap().method.as_str(), "tempo");
+        assert_eq!(results[1].as_ref().unwrap().method.as_str(), "stripe");
+    }
+
+    #[test]
+    fn test_parse_www_authenticate_all_ignores_non_payment_schemes() {
+        // Bearer and other non-Payment schemes should be silently ignored
+        let headers = vec![
+            "Bearer token123",
+            r#"Payment id="t1", realm="api", method="tempo", intent="charge", request="e30""#,
+            "Basic dXNlcjpwYXNz",
+        ];
+        let results = parse_www_authenticate_all(headers);
+        assert_eq!(results.len(), 1);
+        assert_eq!(results[0].as_ref().unwrap().method.as_str(), "tempo");
+
+        // Mixed in a single header value: Bearer prefix followed by Payment challenge
+        let mixed = concat!(
+            "Bearer token123, ",
+            r#"Payment id="s1", realm="api", method="stripe", intent="charge", request="e30""#,
+        );
+        let results = parse_www_authenticate_all(vec![mixed]);
+        assert_eq!(results.len(), 1);
+        assert_eq!(results[0].as_ref().unwrap().method.as_str(), "stripe");
     }
 }
