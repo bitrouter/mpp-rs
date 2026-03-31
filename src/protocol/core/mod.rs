@@ -71,6 +71,8 @@ pub mod headers;
 pub mod types;
 
 // Re-export all public types
+#[cfg(feature = "server")]
+pub(crate) use challenge::constant_time_eq;
 pub use challenge::{
     compute_challenge_id, extract_tx_hash, ChallengeEcho, PaymentChallenge, PaymentCredential,
     PaymentPayload, Receipt,
