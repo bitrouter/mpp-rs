@@ -20,12 +20,12 @@ use axum::{
     Router,
 };
 use futures::stream;
-use mpp::client::channel_ops::default_escrow_contract;
-use mpp::server::{
+use mpp_br::client::channel_ops::default_escrow_contract;
+use mpp_br::server::{
     tempo, Mpp, SessionChallengeOptions, SessionChannelStore, SessionMethodConfig,
     TempoChargeMethod, TempoConfig, TempoSessionMethod,
 };
-use mpp::{parse_authorization, PaymentCredential, PrivateKeySigner};
+use mpp_br::{parse_authorization, PaymentCredential, PrivateKeySigner};
 use serde::Deserialize;
 use std::sync::Arc;
 use std::time::Duration;
@@ -42,8 +42,8 @@ const PRICE_PER_TOKEN: u128 = 75;
 const UNIT_TYPE: &str = "token";
 
 type PaymentHandler = Mpp<
-    TempoChargeMethod<mpp::server::TempoProvider>,
-    TempoSessionMethod<mpp::server::TempoProvider>,
+    TempoChargeMethod<mpp_br::server::TempoProvider>,
+    TempoSessionMethod<mpp_br::server::TempoProvider>,
 >;
 
 struct AppState {
@@ -85,8 +85,8 @@ async fn main() {
     .expect("failed to create payment handler");
 
     // Create the session method with shared store.
-    let provider = mpp::server::tempo_provider(RPC_URL).expect("failed to create provider");
-    let chain_id = mpp::tempo::MODERATO_CHAIN_ID;
+    let provider = mpp_br::server::tempo_provider(RPC_URL).expect("failed to create provider");
+    let chain_id = mpp_br::tempo::MODERATO_CHAIN_ID;
     let session_method = TempoSessionMethod::new(
         provider,
         store.clone(),
@@ -190,7 +190,7 @@ async fn chat(
 
     // Use mpp's sse::serve for metered streaming with automatic
     // balance tracking, need-voucher events, and final receipt.
-    let event_stream = mpp::server::sse::serve(mpp::server::sse::ServeOptions {
+    let event_stream = mpp_br::server::sse::serve(mpp_br::server::sse::ServeOptions {
         store: state.store.clone(),
         channel_id,
         challenge_id,
@@ -206,7 +206,7 @@ async fn chat(
         }
     };
 
-    let headers = mpp::server::sse::sse_headers();
+    let headers = mpp_br::server::sse::sse_headers();
     let header_tuples: Vec<(String, String)> = headers
         .into_iter()
         .map(|(k, v)| (k.to_string(), v.to_string()))

@@ -79,8 +79,8 @@ pub fn signing_hash(chain_id: u64, challenge_id: &str) -> B256 {
 
 /// Sign a zero-amount charge proof for the given challenge ID.
 #[cfg(feature = "evm")]
-pub async fn sign_proof(
-    signer: &impl alloy::signers::Signer,
+pub async fn sign_proof<S: alloy::signers::Signer + ?Sized>(
+    signer: &S,
     chain_id: u64,
     challenge_id: &str,
 ) -> crate::error::Result<String> {

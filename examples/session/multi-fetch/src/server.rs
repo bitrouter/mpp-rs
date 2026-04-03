@@ -18,12 +18,12 @@ use axum::{
     routing::get,
     Router,
 };
-use mpp::client::channel_ops::default_escrow_contract;
-use mpp::server::{
+use mpp_br::client::channel_ops::default_escrow_contract;
+use mpp_br::server::{
     tempo, Mpp, SessionChallengeOptions, SessionChannelStore, SessionMethodConfig,
     TempoChargeMethod, TempoConfig, TempoSessionMethod,
 };
-use mpp::{parse_authorization, PaymentCredential, PrivateKeySigner};
+use mpp_br::{parse_authorization, PaymentCredential, PrivateKeySigner};
 use std::sync::Arc;
 use tempo_alloy::TempoNetwork;
 
@@ -33,8 +33,8 @@ const CHAIN_ID: u64 = 42431;
 const AMOUNT_PER_REQUEST: &str = "10000";
 
 type PaymentHandler = Mpp<
-    TempoChargeMethod<mpp::server::TempoProvider>,
-    TempoSessionMethod<mpp::server::TempoProvider>,
+    TempoChargeMethod<mpp_br::server::TempoProvider>,
+    TempoSessionMethod<mpp_br::server::TempoProvider>,
 >;
 
 #[derive(serde::Deserialize)]
@@ -68,7 +68,7 @@ async fn main() {
     .expect("failed to create payment handler");
 
     // Create the session method with an in-memory channel store.
-    let rpc_provider = mpp::server::tempo_provider(RPC_URL).expect("failed to create provider");
+    let rpc_provider = mpp_br::server::tempo_provider(RPC_URL).expect("failed to create provider");
     let store = Arc::new(SessionChannelStore::new());
     let session_method = TempoSessionMethod::new(
         rpc_provider,

@@ -15,12 +15,12 @@ use std::sync::Arc;
 
 use axum::extract::ws::{Message, WebSocket};
 use axum::{extract::ws::WebSocketUpgrade, routing::get, Router};
-use mpp::protocol::core::Receipt;
-use mpp::protocol::intents::ChargeRequest;
-use mpp::protocol::traits::{ChargeMethod, VerificationError};
-use mpp::server::ws::{WsMessage, WsResponse};
-use mpp::server::Mpp;
-use mpp::PaymentCredential;
+use mpp_br::protocol::core::Receipt;
+use mpp_br::protocol::intents::ChargeRequest;
+use mpp_br::protocol::traits::{ChargeMethod, VerificationError};
+use mpp_br::server::ws::{WsMessage, WsResponse};
+use mpp_br::server::Mpp;
+use mpp_br::PaymentCredential;
 
 const FORTUNES: &[&str] = &[
     "A beautiful day awaits you.",
@@ -106,7 +106,7 @@ async fn ws_handler(
                 continue;
             };
 
-            let Ok(parsed) = mpp::parse_authorization(&credential) else {
+            let Ok(parsed) = mpp_br::parse_authorization(&credential) else {
                 let _ = send_error(&mut socket, "Malformed credential").await;
                 continue;
             };

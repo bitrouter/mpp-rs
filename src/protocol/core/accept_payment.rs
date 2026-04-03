@@ -21,7 +21,7 @@
 //! # Examples
 //!
 //! ```
-//! use mpp::protocol::core::accept_payment::{parse, serialize, rank, Entry, HasMethodIntent};
+//! use mpp_br::protocol::core::accept_payment::{parse, serialize, rank, Entry, HasMethodIntent};
 //!
 //! let entries = parse("tempo/charge, stripe/charge;q=0.5").unwrap();
 //! assert_eq!(entries.len(), 2);

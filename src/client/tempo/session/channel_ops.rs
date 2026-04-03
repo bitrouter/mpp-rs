@@ -103,8 +103,8 @@ pub fn build_credential(
 }
 
 /// Create a voucher payload by signing a voucher.
-pub async fn create_voucher_payload(
-    signer: &impl Signer,
+pub async fn create_voucher_payload<S: Signer + ?Sized>(
+    signer: &S,
     channel_id: B256,
     cumulative_amount: u128,
     escrow_contract: Address,
@@ -127,8 +127,8 @@ pub async fn create_voucher_payload(
 }
 
 /// Create a close payload by signing a voucher with close action.
-pub async fn create_close_payload(
-    signer: &impl Signer,
+pub async fn create_close_payload<S: Signer + ?Sized>(
+    signer: &S,
     channel_id: B256,
     cumulative_amount: u128,
     escrow_contract: Address,
@@ -179,7 +179,7 @@ pub async fn create_open_payload<P, S>(
 ) -> Result<(ChannelEntry, SessionCredentialPayload), MppError>
 where
     P: Provider<TempoNetwork>,
-    S: Signer + Clone,
+    S: Signer + ?Sized,
 {
     use alloy::sol;
     use tempo_primitives::transaction::Call;

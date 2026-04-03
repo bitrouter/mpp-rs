@@ -18,9 +18,9 @@
 //! cargo run --bin stripe-client -- --server http://localhost:8000
 //! ```
 
-use mpp::client::{Fetch, StripeProvider};
-use mpp::protocol::methods::stripe::CreateTokenResult;
-use mpp::{parse_receipt, MppError};
+use mpp_br::client::{Fetch, StripeProvider};
+use mpp_br::protocol::methods::stripe::CreateTokenResult;
+use mpp_br::{parse_receipt, MppError};
 use reqwest::Client;
 
 #[tokio::main]

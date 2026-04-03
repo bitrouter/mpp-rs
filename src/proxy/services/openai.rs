@@ -7,8 +7,8 @@ use crate::proxy::service::{Service, ServiceBuilder};
 /// # Example
 ///
 /// ```
-/// use mpp::proxy::service::{Endpoint, PaidEndpoint, ServiceBuilder};
-/// use mpp::proxy::services::openai;
+/// use mpp_br::proxy::service::{Endpoint, PaidEndpoint, ServiceBuilder};
+/// use mpp_br::proxy::services::openai;
 ///
 /// let svc = openai::service("sk-...", |r| {
 ///     r.route("POST /v1/chat/completions", Endpoint::Paid(PaidEndpoint {

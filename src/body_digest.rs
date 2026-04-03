@@ -7,7 +7,7 @@
 //! # Examples
 //!
 //! ```
-//! use mpp::body_digest;
+//! use mpp_br::body_digest;
 //!
 //! let digest = body_digest::compute(b"hello");
 //! assert!(body_digest::verify(&digest, b"hello"));

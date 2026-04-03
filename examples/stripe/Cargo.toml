@@ -13,7 +13,7 @@ name = "stripe-client"
 path = "src/client.rs"
 
 [dependencies]
-mpp = { path = "../..", features = ["server", "client", "stripe"] }
+mpp-br = { path = "../..", features = ["server", "client", "stripe"] }
 axum = "0.8"
 tokio = { version = "1", features = ["full"] }
 reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }

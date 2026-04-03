@@ -14,8 +14,8 @@
 //! ```
 
 use futures_util::{SinkExt, StreamExt};
-use mpp::client::ws::WsServerMessage;
-use mpp::protocol::core::{format_authorization, PaymentPayload};
+use mpp_br::client::ws::WsServerMessage;
+use mpp_br::protocol::core::{format_authorization, PaymentPayload};
 use tokio_tungstenite::tungstenite;
 
 #[tokio::main]
@@ -59,11 +59,11 @@ async fn main() {
                 println!("Received payment challenge");
 
                 // Parse the challenge
-                let parsed: mpp::PaymentChallenge =
+                let parsed: mpp_br::PaymentChallenge =
                     serde_json::from_value(challenge).expect("parse challenge");
 
                 // Create a mock credential (in real use, sign a transaction)
-                let credential = mpp::PaymentCredential::new(
+                let credential = mpp_br::PaymentCredential::new(
                     parsed.to_echo(),
                     PaymentPayload::hash(
                         "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",

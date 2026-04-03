@@ -28,9 +28,9 @@ use std::future::Future;
 /// ## Implementing for a custom payment network
 ///
 /// ```
-/// use mpp::protocol::traits::{ChargeMethod, VerificationError};
-/// use mpp::protocol::core::{PaymentCredential, Receipt};
-/// use mpp::protocol::intents::ChargeRequest;
+/// use mpp_br::protocol::traits::{ChargeMethod, VerificationError};
+/// use mpp_br::protocol::core::{PaymentCredential, Receipt};
+/// use mpp_br::protocol::intents::ChargeRequest;
 /// use std::future::Future;
 ///
 /// #[derive(Clone)]
@@ -62,7 +62,7 @@ use std::future::Future;
 ///
 /// ```ignore
 /// use axum::{extract::State, response::IntoResponse};
-/// use mpp::protocol::traits::ChargeMethod;
+/// use mpp_br::protocol::traits::ChargeMethod;
 ///
 /// async fn verify_payment<M: ChargeMethod>(
 ///     State(method): State<M>,

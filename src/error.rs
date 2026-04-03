@@ -30,7 +30,7 @@ pub const STREAM_PROBLEM_TYPE_BASE: &str = SESSION_PROBLEM_TYPE_BASE;
 /// # Example
 ///
 /// ```
-/// use mpp::error::PaymentErrorDetails;
+/// use mpp_br::error::PaymentErrorDetails;
 ///
 /// let problem = PaymentErrorDetails::core("verification-failed")
 ///     .with_title("VerificationFailedError")
@@ -125,7 +125,7 @@ impl PaymentErrorDetails {
 /// # Example
 ///
 /// ```
-/// use mpp::error::{PaymentError, PaymentErrorDetails};
+/// use mpp_br::error::{PaymentError, PaymentErrorDetails};
 ///
 /// struct MyError {
 ///     reason: String,

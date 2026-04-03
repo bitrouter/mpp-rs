@@ -13,9 +13,9 @@
 
 use axum::{routing::get, Router};
 use futures_util::{SinkExt, StreamExt};
-use mpp::protocol::core::{format_authorization, PaymentPayload};
-use mpp::server::ws::{WsMessage, WsResponse};
-use mpp::server::{tempo, Mpp, TempoConfig};
+use mpp_br::protocol::core::{format_authorization, PaymentPayload};
+use mpp_br::server::ws::{WsMessage, WsResponse};
+use mpp_br::server::{tempo, Mpp, TempoConfig};
 use tokio_tungstenite::tungstenite;
 
 /// Start an axum server with a WS payment endpoint.
@@ -58,7 +58,7 @@ async fn start_ws_server() -> (String, tokio::task::JoinHandle<()>) {
                                 continue;
                             };
 
-                            let Ok(parsed) = mpp::parse_authorization(&credential) else {
+                            let Ok(parsed) = mpp_br::parse_authorization(&credential) else {
                                 continue;
                             };
 
@@ -119,7 +119,7 @@ async fn test_ws_e2e_challenge_credential_flow() {
     let WsResponse::Challenge { challenge, .. } = server_msg else {
         panic!("expected Challenge, got: {server_msg:?}");
     };
-    let challenge: mpp::PaymentChallenge =
+    let challenge: mpp_br::PaymentChallenge =
         serde_json::from_value(challenge).expect("parse challenge");
 
     assert_eq!(challenge.method.as_str(), "tempo");
@@ -127,7 +127,7 @@ async fn test_ws_e2e_challenge_credential_flow() {
 
     // 2. Send credential (mock — use a hash payload)
     let credential =
-        mpp::PaymentCredential::new(challenge.to_echo(), PaymentPayload::hash("0xdeadbeef"));
+        mpp_br::PaymentCredential::new(challenge.to_echo(), PaymentPayload::hash("0xdeadbeef"));
     let auth_str = format_authorization(&credential).unwrap();
     let cred_msg = WsMessage::Credential {
         credential: auth_str,
@@ -211,15 +211,15 @@ async fn test_ws_challenge_id_mismatch_rejected() {
     };
 
     // Send credential with a DIFFERENT challenge ID (forged echo)
-    let fake_challenge = mpp::PaymentChallenge::new(
+    let fake_challenge = mpp_br::PaymentChallenge::new(
         "wrong-challenge-id",
         "test.example.com",
         "tempo",
         "charge",
-        mpp::Base64UrlJson::from_value(&serde_json::json!({"amount": "999"})).unwrap(),
+        mpp_br::Base64UrlJson::from_value(&serde_json::json!({"amount": "999"})).unwrap(),
     );
     let credential =
-        mpp::PaymentCredential::new(fake_challenge.to_echo(), PaymentPayload::hash("0xdeadbeef"));
+        mpp_br::PaymentCredential::new(fake_challenge.to_echo(), PaymentPayload::hash("0xdeadbeef"));
     let auth_str = format_authorization(&credential).unwrap();
     let cred_msg = WsMessage::Credential {
         credential: auth_str,
@@ -256,7 +256,7 @@ async fn test_ws_challenge_id_mismatch_rejected() {
 /// Server/client wire types are cross-compatible.
 #[test]
 fn test_server_client_wire_type_compat() {
-    use mpp::client::ws::WsServerMessage;
+    use mpp_br::client::ws::WsServerMessage;
 
     // Serialize with server types, deserialize with client types
     let server_challenge = WsResponse::Challenge {
@@ -299,7 +299,7 @@ fn test_server_client_wire_type_compat() {
     assert!(matches!(client_parsed, WsServerMessage::Error { .. }));
 
     // Serialize with client types, deserialize with server types
-    use mpp::client::ws::WsClientMessage;
+    use mpp_br::client::ws::WsClientMessage;
     let client_cred = WsClientMessage::Credential {
         credential: "Payment id=\"abc\"".into(),
     };

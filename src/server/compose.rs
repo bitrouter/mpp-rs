@@ -8,8 +8,8 @@
 //! # Example
 //!
 //! ```ignore
-//! use mpp::server::{compose, compose_verify};
-//! use mpp::format_www_authenticate_many;
+//! use mpp_br::server::{compose, compose_verify};
+//! use mpp_br::format_www_authenticate_many;
 //!
 //! let tempo_challenge = tempo_mpp.charge("0.10")?;
 //! let stripe_challenge = stripe_mpp.stripe_charge("0.10")?;

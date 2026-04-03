@@ -20,8 +20,8 @@
 //! # Example
 //!
 //! ```ignore
-//! use mpp::client::ws::WsTransport;
-//! use mpp::client::transport::Transport;
+//! use mpp_br::client::ws::WsTransport;
+//! use mpp_br::client::transport::Transport;
 //!
 //! let transport = WsTransport;
 //! ```

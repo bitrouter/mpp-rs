@@ -24,8 +24,8 @@ use axum::{
     routing::{get, post},
     Json, Router,
 };
-use mpp::server::{stripe, Mpp, StripeChargeMethod, StripeConfig};
-use mpp::{format_www_authenticate, parse_authorization};
+use mpp_br::server::{stripe, Mpp, StripeChargeMethod, StripeConfig};
+use mpp_br::{format_www_authenticate, parse_authorization};
 use rand::seq::IndexedRandom;
 use std::sync::Arc;
 

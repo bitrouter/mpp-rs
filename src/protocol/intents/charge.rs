@@ -18,7 +18,7 @@ use crate::evm::U256;
 /// # Examples
 ///
 /// ```
-/// use mpp::protocol::intents::ChargeRequest;
+/// use mpp_br::protocol::intents::ChargeRequest;
 ///
 /// let req = ChargeRequest {
 ///     amount: "1000000".to_string(),

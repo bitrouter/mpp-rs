@@ -14,8 +14,8 @@
 //! Implement [`Transport`] for custom protocols:
 //!
 //! ```ignore
-//! use mpp::server::transport::{Transport, ChallengeContext};
-//! use mpp::protocol::core::{PaymentChallenge, PaymentCredential, Receipt};
+//! use mpp_br::server::transport::{Transport, ChallengeContext};
+//! use mpp_br::protocol::core::{PaymentChallenge, PaymentCredential, Receipt};
 //!
 //! struct MyTransport;
 //!

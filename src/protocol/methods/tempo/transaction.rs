@@ -22,7 +22,7 @@
 //! Using the tempo-alloy transaction request builder:
 //!
 //! ```ignore
-//! use mpp::protocol::methods::tempo::transaction::TempoTransactionRequest;
+//! use mpp_br::protocol::methods::tempo::transaction::TempoTransactionRequest;
 //! use alloy::primitives::{Address, U256};
 //!
 //! let request = TempoTransactionRequest::default()

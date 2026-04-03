@@ -18,7 +18,7 @@
 //! # Example
 //!
 //! ```ignore
-//! use mpp::server::ws_session::{WsSessionOptions, ws_session};
+//! use mpp_br::server::ws_session::{WsSessionOptions, ws_session};
 //!
 //! ws_session(socket, WsSessionOptions {
 //!     store,

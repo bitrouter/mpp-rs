@@ -22,13 +22,13 @@ use axum::{
     routing::get,
     Json, Router,
 };
-use mpp::server::{tempo, Mpp, TempoChargeMethod, TempoConfig};
-use mpp::{format_www_authenticate, parse_authorization, PrivateKeySigner};
+use mpp_br::server::{tempo, Mpp, TempoChargeMethod, TempoConfig};
+use mpp_br::{format_www_authenticate, parse_authorization, PrivateKeySigner};
 use rand::seq::IndexedRandom;
 use std::sync::Arc;
 use tempo_alloy::TempoNetwork;
 
-type Payment = Mpp<TempoChargeMethod<mpp::server::TempoProvider>>;
+type Payment = Mpp<TempoChargeMethod<mpp_br::server::TempoProvider>>;
 
 const FORTUNES: &[&str] = &[
     "A beautiful, smart, and loving person will come into your life.",

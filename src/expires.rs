@@ -6,7 +6,7 @@
 //! # Examples
 //!
 //! ```
-//! use mpp::expires;
+//! use mpp_br::expires;
 //!
 //! let five_min = expires::minutes(5);
 //! let one_hour = expires::hours(1);
@@ -63,7 +63,7 @@ pub fn years(n: u64) -> String {
 /// # Examples
 ///
 /// ```
-/// use mpp::expires;
+/// use mpp_br::expires;
 ///
 /// assert!(expires::assert(None, None).is_err());
 /// assert!(expires::assert(Some("not-a-date"), None).is_err());

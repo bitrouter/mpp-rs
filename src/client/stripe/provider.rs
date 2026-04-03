@@ -42,17 +42,17 @@ pub struct CreateTokenParams {
 /// # Example
 ///
 /// ```ignore
-/// use mpp::client::stripe::StripeProvider;
-/// use mpp::protocol::methods::stripe::CreateTokenResult;
+/// use mpp_br::client::stripe::StripeProvider;
+/// use mpp_br::protocol::methods::stripe::CreateTokenResult;
 ///
 /// let provider = StripeProvider::new(|params| {
 ///     Box::pin(async move {
 ///         let resp = reqwest::Client::new()
 ///             .post("https://my-server.com/api/create-spt")
 ///             .json(&params)
-///             .send().await.map_err(|e| mpp::MppError::Http(e.to_string()))?
+///             .send().await.map_err(|e| mpp_br::MppError::Http(e.to_string()))?
 ///             .json::<serde_json::Value>().await
-///             .map_err(|e| mpp::MppError::Http(e.to_string()))?;
+///             .map_err(|e| mpp_br::MppError::Http(e.to_string()))?;
 ///         Ok(CreateTokenResult {
 ///             spt: resp["spt"].as_str().unwrap().to_string(),
 ///             external_id: None,

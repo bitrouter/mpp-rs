@@ -37,7 +37,7 @@ The client fetches both the cheap and premium fortune, handling 402 challenges a
 Define a `ChargeConfig` for each price point:
 
 ```rust
-use mpp::server::axum::{ChargeConfig, MppCharge, WithReceipt};
+use mpp_br::server::axum::{ChargeConfig, MppCharge, WithReceipt};
 
 struct OneCent;
 impl ChargeConfig for OneCent {

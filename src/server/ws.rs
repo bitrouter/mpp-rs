@@ -21,7 +21,7 @@
 //! # Example
 //!
 //! ```ignore
-//! use mpp::server::ws::{WsTransport, WsMessage};
+//! use mpp_br::server::ws::{WsTransport, WsMessage};
 //!
 //! let transport = WsTransport;
 //!
