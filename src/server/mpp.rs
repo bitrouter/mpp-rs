@@ -6,9 +6,9 @@
 //! # Example (simple API)
 //!
 //! ```ignore
-//! use mpp::server::{Mpp, tempo};
+//! use mpp_br::server::{Mpp, tempo};
 //!
-//! let mpp = Mpp::create(tempo(mpp::server::TempoConfig {
+//! let mpp = Mpp::create(tempo(mpp_br::server::TempoConfig {
 //!     recipient: "0x742d35Cc6634C0532925a3b844Bc9e7595f1B0F2",
 //! }))?;
 //!
@@ -75,7 +75,7 @@ pub struct SessionVerifyResult {
 /// # Simple API
 ///
 /// ```ignore
-/// use mpp::server::{Mpp, tempo, TempoConfig};
+/// use mpp_br::server::{Mpp, tempo, TempoConfig};
 ///
 /// let mpp = Mpp::create(tempo(TempoConfig {
 ///     recipient: "0xabc...123",
@@ -88,7 +88,7 @@ pub struct SessionVerifyResult {
 /// # Advanced API
 ///
 /// ```ignore
-/// use mpp::server::{Mpp, tempo_provider, TempoChargeMethod};
+/// use mpp_br::server::{Mpp, tempo_provider, TempoChargeMethod};
 ///
 /// let provider = tempo_provider("https://rpc.moderato.tempo.xyz")?;
 /// let method = TempoChargeMethod::new(provider);
@@ -665,7 +665,7 @@ impl Mpp<super::TempoChargeMethod<super::TempoProvider>> {
     /// # Example
     ///
     /// ```ignore
-    /// use mpp::server::{Mpp, tempo, TempoConfig};
+    /// use mpp_br::server::{Mpp, tempo, TempoConfig};
     ///
     /// let mpp = Mpp::create(tempo(TempoConfig {
     ///     currency: "0x20c0000000000000000000000000000000000000",
@@ -816,7 +816,7 @@ impl Mpp<crate::protocol::methods::stripe::method::ChargeMethod> {
     /// # Example
     ///
     /// ```ignore
-    /// use mpp::server::{Mpp, stripe, StripeConfig};
+    /// use mpp_br::server::{Mpp, stripe, StripeConfig};
     ///
     /// let mpp = Mpp::create_stripe(stripe(StripeConfig {
     ///     secret_key: "sk_test_...",

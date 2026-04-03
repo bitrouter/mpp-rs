@@ -26,7 +26,7 @@ use crate::protocol::methods::tempo::session_receipt::SessionReceipt;
 /// # Example
 ///
 /// ```
-/// use mpp::server::sse::NeedVoucherEvent;
+/// use mpp_br::server::sse::NeedVoucherEvent;
 ///
 /// let event = NeedVoucherEvent {
 ///     channel_id: "0xabc".into(),
@@ -50,7 +50,7 @@ pub struct NeedVoucherEvent {
 /// # Example
 ///
 /// ```
-/// use mpp::server::sse::{parse_event, SseEvent};
+/// use mpp_br::server::sse::{parse_event, SseEvent};
 ///
 /// let raw = "event: message\ndata: hello\n\n";
 /// assert_eq!(parse_event(raw), Some(SseEvent::Message("hello".into())));
@@ -75,8 +75,8 @@ pub enum SseEvent {
 /// # Example
 ///
 /// ```
-/// use mpp::server::sse::format_receipt_event;
-/// use mpp::protocol::methods::tempo::session_receipt::SessionReceipt;
+/// use mpp_br::server::sse::format_receipt_event;
+/// use mpp_br::protocol::methods::tempo::session_receipt::SessionReceipt;
 ///
 /// let receipt = SessionReceipt::new(
 ///     "2025-01-01T00:00:00Z",
@@ -104,7 +104,7 @@ pub fn format_receipt_event(receipt: &SessionReceipt) -> String {
 /// # Example
 ///
 /// ```
-/// use mpp::server::sse::{format_need_voucher_event, NeedVoucherEvent};
+/// use mpp_br::server::sse::{format_need_voucher_event, NeedVoucherEvent};
 ///
 /// let event = format_need_voucher_event(&NeedVoucherEvent {
 ///     channel_id: "0xabc".into(),
@@ -126,7 +126,7 @@ pub fn format_need_voucher_event(event: &NeedVoucherEvent) -> String {
 /// # Example
 ///
 /// ```
-/// use mpp::server::sse::format_message_event;
+/// use mpp_br::server::sse::format_message_event;
 ///
 /// assert_eq!(format_message_event("hello"), "event: message\ndata: hello\n\n");
 /// ```
@@ -151,7 +151,7 @@ pub fn format_message_event(data: &str) -> String {
 /// # Example
 ///
 /// ```
-/// use mpp::server::sse::{parse_event, SseEvent};
+/// use mpp_br::server::sse::{parse_event, SseEvent};
 ///
 /// let raw = "event: message\ndata: hello world\n\n";
 /// assert_eq!(parse_event(raw), Some(SseEvent::Message("hello world".into())));
@@ -198,7 +198,7 @@ pub fn parse_event(raw: &str) -> Option<SseEvent> {
 /// # Example
 ///
 /// ```
-/// use mpp::server::sse::is_event_stream;
+/// use mpp_br::server::sse::is_event_stream;
 ///
 /// assert!(is_event_stream("text/event-stream"));
 /// assert!(is_event_stream("Text/Event-Stream; charset=utf-8"));
@@ -352,7 +352,7 @@ fn now_iso8601() -> String {
 /// # Example
 ///
 /// ```
-/// use mpp::server::sse::sse_headers;
+/// use mpp_br::server::sse::sse_headers;
 ///
 /// let headers = sse_headers();
 /// assert_eq!(headers.len(), 3);

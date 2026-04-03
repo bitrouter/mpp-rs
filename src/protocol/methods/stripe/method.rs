@@ -7,7 +7,7 @@
 //! # Example
 //!
 //! ```ignore
-//! use mpp::protocol::methods::stripe::method::ChargeMethod;
+//! use mpp_br::protocol::methods::stripe::method::ChargeMethod;
 //!
 //! let method = ChargeMethod::new("sk_test_...", "internal", vec!["card"]);
 //! let receipt = method.verify(&credential, &request).await?;

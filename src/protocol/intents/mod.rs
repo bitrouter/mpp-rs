@@ -15,8 +15,8 @@
 //! Use `PaymentChallenge.request.decode::<T>()` to decode the request to a typed struct:
 //!
 //! ```
-//! use mpp::protocol::core::parse_www_authenticate;
-//! use mpp::protocol::intents::ChargeRequest;
+//! use mpp_br::protocol::core::parse_www_authenticate;
+//! use mpp_br::protocol::intents::ChargeRequest;
 //!
 //! let header = r#"Payment id="abc", realm="api", method="tempo", intent="charge", request="eyJhbW91bnQiOiIxMDAwIiwiY3VycmVuY3kiOiJVU0QifQ""#;
 //! let challenge = parse_www_authenticate(header).unwrap();

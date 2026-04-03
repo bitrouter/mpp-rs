@@ -15,7 +15,7 @@
 //! # Example
 //!
 //! ```ignore
-//! use mpp::client::TempoProvider;
+//! use mpp_br::client::TempoProvider;
 //!
 //! let provider = TempoProvider::new(signer, "https://rpc.moderato.tempo.xyz")?
 //!     .with_autoswap(AutoswapConfig {

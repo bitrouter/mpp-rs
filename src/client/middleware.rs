@@ -23,7 +23,7 @@ use crate::protocol::core::{
 /// # Examples
 ///
 /// ```ignore
-/// use mpp::client::{PaymentMiddleware, TempoProvider};
+/// use mpp_br::client::{PaymentMiddleware, TempoProvider};
 /// use reqwest_middleware::ClientBuilder;
 ///
 /// let provider = TempoProvider::new(signer, "https://rpc.moderato.tempo.xyz")?;

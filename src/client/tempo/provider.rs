@@ -1,5 +1,7 @@
 //! Tempo charge payment provider.
 
+use std::sync::Arc;
+
 use crate::error::{MppError, ResultExt};
 use crate::protocol::core::{PaymentChallenge, PaymentCredential};
 
@@ -19,11 +21,14 @@ use crate::client::PaymentProvider;
 /// 2. Builds and signs a TIP-20 transfer transaction
 /// 3. Returns a credential with the signed transaction (server broadcasts)
 ///
+/// Accepts any type implementing alloy's [`Signer`](alloy::signers::Signer)
+/// trait — local private keys, KMS-backed signers, hardware wallets, etc.
+///
 /// # Examples
 ///
 /// ```ignore
-/// use mpp::client::TempoProvider;
-/// use mpp::PrivateKeySigner;
+/// use mpp_br::client::TempoProvider;
+/// use mpp_br::PrivateKeySigner;
 ///
 /// let signer = PrivateKeySigner::from_bytes(&key)?;
 /// let provider = TempoProvider::new(signer, "https://rpc.moderato.tempo.xyz")?;
@@ -37,7 +42,7 @@ use crate::client::PaymentProvider;
 
 #[derive(Clone)]
 pub struct TempoProvider {
-    signer: alloy::signers::local::PrivateKeySigner,
+    signer: Arc<dyn alloy::signers::Signer + Send + Sync>,
     rpc_url: reqwest::Url,
     client_id: Option<String>,
     signing_mode: TempoSigningMode,
@@ -47,16 +52,19 @@ pub struct TempoProvider {
 impl TempoProvider {
     /// Create a new Tempo provider with the given signer and RPC URL.
     ///
+    /// Accepts any type implementing alloy's [`Signer`](alloy::signers::Signer)
+    /// trait — local private keys, KMS-backed signers, hardware wallets, etc.
+    ///
     /// # Errors
     ///
     /// Returns an error if the RPC URL is invalid.
     pub fn new(
-        signer: alloy::signers::local::PrivateKeySigner,
+        signer: impl alloy::signers::Signer + Send + Sync + 'static,
         rpc_url: impl AsRef<str>,
     ) -> Result<Self, MppError> {
         let url = rpc_url.as_ref().parse().mpp_config("invalid RPC URL")?;
         Ok(Self {
-            signer,
+            signer: Arc::new(signer),
             rpc_url: url,
             client_id: None,
             signing_mode: TempoSigningMode::Direct,
@@ -87,7 +95,7 @@ impl TempoProvider {
     /// # Example
     ///
     /// ```ignore
-    /// use mpp::client::tempo::autoswap::AutoswapConfig;
+    /// use mpp_br::client::tempo::autoswap::AutoswapConfig;
     ///
     /// let provider = TempoProvider::new(signer, "https://rpc.moderato.tempo.xyz")?
     ///     .with_autoswap(AutoswapConfig::new(usdc_address, 100)); // 1% slippage
@@ -108,8 +116,8 @@ impl TempoProvider {
     }
 
     /// Get a reference to the signer.
-    pub fn signer(&self) -> &alloy::signers::local::PrivateKeySigner {
-        &self.signer
+    pub fn signer(&self) -> &(dyn alloy::signers::Signer + Send + Sync) {
+        &*self.signer
     }
 
     /// Get the RPC URL.
@@ -160,7 +168,9 @@ impl PaymentProvider for TempoProvider {
             signing_mode: Some(self.signing_mode.clone()),
             ..Default::default()
         };
-        let signed = charge.sign_with_options(&self.signer, options).await?;
+        let signed = charge
+            .sign_with_options(self.signer.as_ref(), options)
+            .await?;
         Ok(signed.into_credential())
     }
 }

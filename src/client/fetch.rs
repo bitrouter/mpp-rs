@@ -19,7 +19,7 @@ use crate::protocol::core::{
 /// # Examples
 ///
 /// ```ignore
-/// use mpp::client::{Fetch, TempoProvider};
+/// use mpp_br::client::{Fetch, TempoProvider};
 /// use reqwest::Client;
 ///
 /// let provider = TempoProvider::new(signer, "https://rpc.moderato.tempo.xyz")?;

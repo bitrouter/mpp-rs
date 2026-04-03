@@ -52,8 +52,8 @@ alloy::sol! {
 ///
 /// Returns the 65-byte signature as `Bytes`.
 #[cfg(feature = "evm")]
-pub async fn sign_voucher(
-    signer: &impl alloy::signers::Signer,
+pub async fn sign_voucher<S: alloy::signers::Signer + ?Sized>(
+    signer: &S,
     channel_id: alloy::primitives::B256,
     cumulative_amount: u128,
     escrow_contract: alloy::primitives::Address,

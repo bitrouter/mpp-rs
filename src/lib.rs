@@ -5,8 +5,8 @@
 //! # Quick Start
 //!
 //! ```no_run
-//! use mpp::{PaymentChallenge, PaymentCredential, Receipt, ChargeRequest};
-//! use mpp::{parse_www_authenticate, format_authorization};
+//! use mpp_br::{PaymentChallenge, PaymentCredential, Receipt, ChargeRequest};
+//! use mpp_br::{parse_www_authenticate, format_authorization};
 //! # fn main() {}
 //! ```
 //!
@@ -14,7 +14,7 @@
 //!
 #![cfg_attr(feature = "evm", doc = "```no_run")]
 #![cfg_attr(not(feature = "evm"), doc = "```ignore")]
-//! use mpp::{Signer, PrivateKeySigner};
+//! use mpp_br::{Signer, PrivateKeySigner};
 //! # fn main() {}
 //! ```
 //!

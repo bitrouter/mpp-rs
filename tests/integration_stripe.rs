@@ -17,11 +17,11 @@ use std::sync::Arc;
 
 use axum::extract::Form;
 use axum::{routing::get, Json, Router};
-use mpp::client::{Fetch, StripeProvider};
-use mpp::protocol::core::PaymentCredential;
-use mpp::protocol::methods::stripe::{CreateTokenResult, StripeCredentialPayload};
-use mpp::server::axum::{ChargeChallenger, ChargeConfig, MppCharge};
-use mpp::server::{stripe, Mpp, StripeChargeOptions, StripeConfig};
+use mpp_br::client::{Fetch, StripeProvider};
+use mpp_br::protocol::core::PaymentCredential;
+use mpp_br::protocol::methods::stripe::{CreateTokenResult, StripeCredentialPayload};
+use mpp_br::server::axum::{ChargeChallenger, ChargeConfig, MppCharge};
+use mpp_br::server::{stripe, Mpp, StripeChargeOptions, StripeConfig};
 use reqwest::Client;
 
 // ==================== Mock Stripe API ====================
@@ -110,7 +110,7 @@ async fn start_mock_stripe_requires_action() -> (String, tokio::task::JoinHandle
 
 /// Start an axum server with a Stripe-backed Mpp instance.
 async fn start_server(
-    mpp: Arc<Mpp<mpp::protocol::methods::stripe::method::ChargeMethod>>,
+    mpp: Arc<Mpp<mpp_br::protocol::methods::stripe::method::ChargeMethod>>,
 ) -> (String, tokio::task::JoinHandle<()>) {
     let app = Router::new()
         .route("/health", get(health))
@@ -197,7 +197,7 @@ async fn start_mock_stripe_error() -> (String, tokio::task::JoinHandle<()>) {
 /// Uses the raw Mpp API since the axum `MppCharge` extractor is Tempo-specific.
 async fn paid(
     axum::extract::State(mpp): axum::extract::State<
-        Arc<Mpp<mpp::protocol::methods::stripe::method::ChargeMethod>>,
+        Arc<Mpp<mpp_br::protocol::methods::stripe::method::ChargeMethod>>,
     >,
     req: axum::extract::Request,
 ) -> axum::response::Response {
@@ -222,7 +222,7 @@ async fn paid(
 
     match auth_header {
         Some(auth) => {
-            let credential = match mpp::parse_authorization(&auth) {
+            let credential = match mpp_br::parse_authorization(&auth) {
                 Ok(c) => c,
                 Err(_) => return issue_challenge(),
             };
@@ -248,7 +248,7 @@ async fn paid(
 /// Premium paid endpoint: uses `stripe_charge_with_options` with description.
 async fn paid_premium(
     axum::extract::State(mpp): axum::extract::State<
-        Arc<Mpp<mpp::protocol::methods::stripe::method::ChargeMethod>>,
+        Arc<Mpp<mpp_br::protocol::methods::stripe::method::ChargeMethod>>,
     >,
     req: axum::extract::Request,
 ) -> axum::response::Response {
@@ -281,7 +281,7 @@ async fn paid_premium(
     };
 
     match auth_header {
-        Some(auth) => match mpp::parse_authorization(&auth) {
+        Some(auth) => match mpp_br::parse_authorization(&auth) {
             Ok(credential) => match mpp.verify_credential(&credential).await {
                 Ok(receipt) => {
                     let body = serde_json::json!({ "message": "premium content" });
@@ -317,7 +317,7 @@ async fn paid_extractor(charge: MppCharge<TenCents>) -> Json<serde_json::Value> 
 
 /// Start an axum server with a Stripe-backed Mpp instance using the MppCharge extractor.
 async fn start_server_with_extractor(
-    mpp: Arc<Mpp<mpp::protocol::methods::stripe::method::ChargeMethod>>,
+    mpp: Arc<Mpp<mpp_br::protocol::methods::stripe::method::ChargeMethod>>,
 ) -> (String, tokio::task::JoinHandle<()>) {
     let challenger: Arc<dyn ChargeChallenger> = mpp;
     let app = Router::new()
@@ -386,9 +386,9 @@ async fn test_e2e_stripe_charge() {
         .expect("missing Payment-Receipt header")
         .to_str()
         .unwrap();
-    let receipt = mpp::parse_receipt(receipt_hdr).expect("failed to parse receipt");
+    let receipt = mpp_br::parse_receipt(receipt_hdr).expect("failed to parse receipt");
     assert_eq!(receipt.method.as_str(), "stripe");
-    assert_eq!(receipt.status, mpp::ReceiptStatus::Success);
+    assert_eq!(receipt.status, mpp_br::ReceiptStatus::Success);
     assert!(
         receipt.reference.starts_with("pi_mock_"),
         "receipt reference should be a mock PI id, got: {}",
@@ -444,7 +444,7 @@ async fn test_stripe_402_challenge_format() {
         "WWW-Authenticate should start with 'Payment ', got: {www_auth}"
     );
 
-    let challenge = mpp::parse_www_authenticate(www_auth).expect("failed to parse challenge");
+    let challenge = mpp_br::parse_www_authenticate(www_auth).expect("failed to parse challenge");
     assert_eq!(challenge.method.as_str(), "stripe");
     assert_eq!(challenge.intent.as_str(), "charge");
 
@@ -580,7 +580,7 @@ async fn test_stripe_challenge_contains_method_details() {
         .to_str()
         .unwrap();
 
-    let challenge = mpp::parse_www_authenticate(www_auth).expect("failed to parse challenge");
+    let challenge = mpp_br::parse_www_authenticate(www_auth).expect("failed to parse challenge");
     let request: serde_json::Value = challenge
         .request
         .decode_value()
@@ -640,7 +640,7 @@ async fn test_e2e_stripe_charge_with_description() {
         "challenge should contain description"
     );
 
-    let challenge = mpp::parse_www_authenticate(www_auth).expect("failed to parse");
+    let challenge = mpp_br::parse_www_authenticate(www_auth).expect("failed to parse");
     assert_eq!(challenge.description.as_deref(), Some("Premium content"));
 
     let request: serde_json::Value = challenge
@@ -785,7 +785,7 @@ async fn test_stripe_charge_via_mpp_charge_extractor() {
         .expect("missing WWW-Authenticate header")
         .to_str()
         .unwrap();
-    let challenge = mpp::parse_www_authenticate(www_auth).expect("failed to parse challenge");
+    let challenge = mpp_br::parse_www_authenticate(www_auth).expect("failed to parse challenge");
     assert_eq!(challenge.method.as_str(), "stripe");
     assert_eq!(challenge.intent.as_str(), "charge");
 
@@ -897,7 +897,9 @@ async fn create_test_spt(
         .ok_or_else(|| "missing id in SPT response".to_string())
 }
 
-fn create_live_mpp(secret_key: &str) -> Mpp<mpp::protocol::methods::stripe::method::ChargeMethod> {
+fn create_live_mpp(
+    secret_key: &str,
+) -> Mpp<mpp_br::protocol::methods::stripe::method::ChargeMethod> {
     Mpp::create_stripe(
         stripe(StripeConfig {
             secret_key,

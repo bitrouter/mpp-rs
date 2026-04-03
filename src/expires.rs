@@ -6,7 +6,7 @@
 //! # Examples
 //!
 //! ```
-//! use mpp::expires;
+//! use mpp_br::expires;
 //!
 //! let five_min = expires::minutes(5);
 //! let one_hour = expires::hours(1);

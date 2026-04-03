@@ -12,9 +12,9 @@ use crate::protocol::intents::ChargeRequest;
 /// # Examples
 ///
 /// ```
-/// use mpp::protocol::core::parse_www_authenticate;
-/// use mpp::protocol::intents::ChargeRequest;
-/// use mpp::protocol::methods::tempo::TempoChargeExt;
+/// use mpp_br::protocol::core::parse_www_authenticate;
+/// use mpp_br::protocol::intents::ChargeRequest;
+/// use mpp_br::protocol::methods::tempo::TempoChargeExt;
 ///
 /// let header = r#"Payment id="abc", realm="api", method="tempo", intent="charge", request="eyJhbW91bnQiOiIxMDAwIiwiY3VycmVuY3kiOiIweDEyMyIsInJlY2lwaWVudCI6IjB4NDU2In0""#;
 /// let challenge = parse_www_authenticate(header).unwrap();

@@ -10,13 +10,13 @@
 //! - Constants: [`CHAIN_ID`], [`MODERATO_CHAIN_ID`], [`METHOD_NAME`]
 //!
 //! For client/server specific types, use:
-//! - `mpp::client::TempoProvider` (requires `client` + `http`)
-//! - `mpp::server::TempoChargeMethod` (requires `server`)
+//! - `mpp_br::client::TempoProvider` (requires `client` + `http`)
+//! - `mpp_br::server::TempoChargeMethod` (requires `server`)
 //!
 //! # Example
 //!
 //! ```ignore
-//! use mpp::tempo::{ChargeRequest, TempoChargeExt, CHAIN_ID};
+//! use mpp_br::tempo::{ChargeRequest, TempoChargeExt, CHAIN_ID};
 //!
 //! let req: ChargeRequest = challenge.request.decode()?;
 //! if req.fee_payer() {
